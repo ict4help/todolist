@@ -3,9 +3,24 @@
 require 'config.php';
 
 // Function to read all ToDo items from the JSON file
-function getTodos() {
+/*function getTodos() {
     $todos = json_decode(file_get_contents(TODO_FILE), true);
     return is_array($todos) ? $todos : [];
+}*/
+
+// Function to read all ToDo items from the JSON file
+function getTodos() {
+    $todos = json_decode(file_get_contents(TODO_FILE), true);
+    
+    if (is_array($todos)) {
+        // Sort in descending order based on 'created_at' or any other key
+        usort($todos, function($a, $b) {
+            return strtotime($b['created_at']) <=> strtotime($a['created_at']);
+        });
+        return $todos;
+    }
+    
+    return [];
 }
 
 // Function to save all ToDo items to the JSON file
@@ -21,8 +36,8 @@ function addTodo($title, $duedate, $description = '') {
         'title' => $title,
         'duedate' => $duedate,
         'description' => $description,
-        'created_at' => date('Y-m-d'),
-        /*'created_at' => date('Y-m-d H:i:s'),*/
+        // 'created_at' => date('Y-m-d'),
+        'created_at' => date('Y-m-d H:i:s'),
         'completed' => false
     ];
     $todos[] = $newTodo;
